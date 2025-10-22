@@ -1,103 +1,227 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { BookOpen, Trophy, Clock, TrendingUp } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { getDataLoader } from '@/lib/data-loader'
+import { useQuizStore } from '@/store/quiz-store'
+import { Poem } from '@/lib/types'
+
+export default function HomePage() {
+  const [dailyPoem, setDailyPoem] = useState<Poem | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const stats = useQuizStore((state) => state.stats)
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const dataLoader = getDataLoader()
+        await dataLoader.loadPoems()
+        const poem = dataLoader.getDailyPoem()
+        setDailyPoem(poem)
+      } catch (error) {
+        console.error('Failed to load data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadData()
+  }, [])
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="space-y-8 animate-fade-in">
+      {/* ヒーローセクション */}
+      <section className="text-center space-y-4 py-8">
+        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+          百人一首を楽しく学ぼう
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          日本の古典文学の傑作、百人一首をクイズで楽しく学習できます。
+          上の句から下の句を当てたり、作者を当てたり、様々なモードで挑戦しましょう。
+        </p>
+        <div className="flex justify-center gap-4 pt-4">
+          <Link href="/quiz">
+            <Button size="lg" className="gap-2">
+              <BookOpen className="h-5 w-5" />
+              クイズを始める
+            </Button>
+          </Link>
+          <Link href="/library">
+            <Button size="lg" variant="outline" className="gap-2">
+              📚 ライブラリを見る
+            </Button>
+          </Link>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* 今日の一首 */}
+      {dailyPoem && (
+        <section>
+          <Card className="poem-card max-w-2xl mx-auto">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-2xl">🌸 今日の一首</CardTitle>
+                <Badge variant="secondary">第{dailyPoem.id}番</Badge>
+              </div>
+              <CardDescription className="text-lg font-medium">
+                {dailyPoem.author}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="poem-text text-center space-y-2">
+                <p className="text-xl">{dailyPoem.upper}</p>
+                <p className="text-xl">{dailyPoem.lower}</p>
+              </div>
+              <div className="text-sm text-muted-foreground pt-4 border-t">
+                <p className="mb-2 font-medium">読み：</p>
+                <p>{dailyPoem.reading_upper}</p>
+                <p>{dailyPoem.reading_lower}</p>
+              </div>
+              {dailyPoem.description && (
+                <div className="text-sm text-muted-foreground pt-4 border-t">
+                  <p className="mb-2 font-medium">解説：</p>
+                  <p>{dailyPoem.description}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
+      {/* 統計情報 */}
+      <section className="grid md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">総クイズ回数</CardTitle>
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalQuizzes}</div>
+            <p className="text-xs text-muted-foreground">回プレイ</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">総問題数</CardTitle>
+            <Trophy className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalQuestions}</div>
+            <p className="text-xs text-muted-foreground">問に挑戦</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">正解率</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.overallAccuracy.toFixed(1)}%
+            </div>
+            <p className="text-xs text-muted-foreground">全体の正解率</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">習得済み</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.masteredPoems.length}</div>
+            <p className="text-xs text-muted-foreground">首を習得</p>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* クイズモード紹介 */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold text-center">クイズモード</h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>上の句 → 下の句</CardTitle>
+              <CardDescription>
+                上の句から下の句を当てる基本モード
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                最も基本的なモードです。上の句を見て、正しい下の句を4つの選択肢から選びます。
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>下の句 → 上の句</CardTitle>
+              <CardDescription>
+                下の句から上の句を当てるモード
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                下の句を見て上の句を当てます。上の句を覚えるのに効果的です。
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>作者 → 歌</CardTitle>
+              <CardDescription>
+                作者名から歌を当てるモード
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                作者の名前を見て、その作者の歌を選びます。作者と歌の関連を学べます。
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>歌 → 作者</CardTitle>
+              <CardDescription>
+                歌から作者を当てるモード
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                歌を見て作者を当てます。作者の名前を覚えるのに最適です。
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="text-center py-8">
+        <Card className="max-w-2xl mx-auto bg-gradient-to-r from-pink-50 to-purple-50">
+          <CardHeader>
+            <CardTitle className="text-2xl">さあ、始めましょう！</CardTitle>
+            <CardDescription>
+              自分に合った難易度とモードで学習を開始
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href="/quiz">
+              <Button size="lg" className="gap-2">
+                <BookOpen className="h-5 w-5" />
+                クイズに挑戦する
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </section>
     </div>
-  );
+  )
 }
