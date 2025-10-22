@@ -29,7 +29,15 @@ export class DataLoader {
         throw new Error('Invalid data format')
       }
 
-      this.poems = data.map((item: any) => ({
+      this.poems = data.map((item: {
+        id: number
+        author: string
+        upper: string
+        lower: string
+        reading_upper: string
+        reading_lower: string
+        description?: string
+      }) => ({
         id: item.id,
         author: item.author,
         upper: item.upper,
